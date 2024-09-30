@@ -31,29 +31,35 @@ class PokerUI:
         self.player_hand_frame = tk.Frame(self.main_frame)
         self.player_hand_frame.grid(row=1, column=0, sticky="ew")
 
+        self.computer_hand_label = tk.Label(self.main_frame, text="Computer's Hand:")
+        self.computer_hand_label.grid(row=2, column=0, sticky="w")
+
+        self.computer_hand_frame = tk.Frame(self.main_frame)
+        self.computer_hand_frame.grid(row=3, column=0, sticky="ew")
+
         self.community_cards_label = tk.Label(self.main_frame, text="Community Cards:")
-        self.community_cards_label.grid(row=2, column=0, sticky="w")
+        self.community_cards_label.grid(row=4, column=0, sticky="w")
 
         self.community_cards_frame = tk.Frame(self.main_frame)
-        self.community_cards_frame.grid(row=3, column=0, sticky="ew")
+        self.community_cards_frame.grid(row=5, column=0, sticky="ew")
 
         self.pot_label = tk.Label(self.main_frame, text="Pot: $0")
-        self.pot_label.grid(row=4, column=0, sticky="w")
+        self.pot_label.grid(row=6, column=0, sticky="w")
 
         self.player_chips_label = tk.Label(self.main_frame, text="Your Chips: $1000")
-        self.player_chips_label.grid(row=5, column=0, sticky="w")
+        self.player_chips_label.grid(row=7, column=0, sticky="w")
 
         self.computer_chips_label = tk.Label(self.main_frame, text="Computer Chips: $1000")
-        self.computer_chips_label.grid(row=6, column=0, sticky="w")
+        self.computer_chips_label.grid(row=8, column=0, sticky="w")
 
         self.blinds_label = tk.Label(self.main_frame, text=f"Blinds: ${self.game.small_blind}/{self.game.big_blind}")
-        self.blinds_label.grid(row=7, column=0, sticky="w")
+        self.blinds_label.grid(row=9, column=0, sticky="w")
 
         self.dealer_label = tk.Label(self.main_frame, text="Dealer: Player")
-        self.dealer_label.grid(row=8, column=0, sticky="w")
+        self.dealer_label.grid(row=10, column=0, sticky="w")
 
         self.action_frame = tk.Frame(self.main_frame)
-        self.action_frame.grid(row=7, column=0, sticky="ew")
+        self.action_frame.grid(row=11, column=0, sticky="ew")
 
         self.fold_button = tk.Button(self.action_frame, text="Fold", command=lambda: self.player_action("fold"))
         self.fold_button.pack(side=tk.LEFT)
@@ -65,27 +71,30 @@ class PokerUI:
         self.bet_button.pack(side=tk.LEFT)
 
         self.deal_button = tk.Button(self.main_frame, text="Deal", command=self.deal)
-        self.deal_button.grid(row=8, column=0, sticky="ew")
+        self.deal_button.grid(row=12, column=0, sticky="ew")
 
-        self.new_game_button = tk.Button(self.main_frame, text="New Game", command=self.new_game)
-        self.new_game_button.grid(row=9, column=0, sticky="ew")
+        self.new_game_button = tk.Button(self.main_frame, text="Reset Chips", command=self.reset_chips)
+        self.new_game_button.grid(row=13, column=0, sticky="ew")
 
         self.cheatsheet_var = tk.BooleanVar()
         self.cheatsheet_checkbox = tk.Checkbutton(self.main_frame, text="Show Cheatsheet", 
                                                   variable=self.cheatsheet_var, 
                                                   command=self.toggle_cheatsheet)
-        self.cheatsheet_checkbox.grid(row=10, column=0, sticky="w")
+        self.cheatsheet_checkbox.grid(row=14, column=0, sticky="w")
 
         self.message_label = tk.Label(self.main_frame, text="")
-        self.message_label.grid(row=11, column=0, sticky="w")
+        self.message_label.grid(row=15, column=0, sticky="w")
 
         self.create_cheatsheet()
 
     def deal(self):
+        self.game.reset_game()
         self.game.deal_initial_hands()
         self.update_display()
         self.deal_button.config(state=tk.DISABLED)
         self.enable_action_buttons()
+        for widget in self.computer_hand_frame.winfo_children():
+            widget.destroy()
 
     def player_action(self, action, amount=0):
         result = self.game.player_action(action, amount)
@@ -93,7 +102,6 @@ class PokerUI:
         self.update_display()
         if action == "fold":
             self.show_results("Computer wins!")
-            self.master.after(2000, self.new_game)
         else:
             self.game.next_player()
             self.bot_turn()
@@ -104,7 +112,6 @@ class PokerUI:
         self.update_display()
         if result == "fold":
             self.show_results("Player wins!")
-            self.master.after(2000, self.new_game)
         else:
             self.game.next_player()
             self.next_stage()
@@ -135,20 +142,26 @@ class PokerUI:
             else:
                 self.message_label.config(text="It's a tie!")
         self.disable_action_buttons()
-
-    def new_game(self):
-        self.game.reset_game()
-        self.game.next_dealer()
-        self.update_display()
         self.deal_button.config(state=tk.NORMAL)
-        self.disable_action_buttons()
-        self.message_label.config(text="")
+        self.update_display(show_computer_hand=True)
 
-    def update_display(self):
+    def reset_chips(self):
+        for player in self.game.players:
+            player.chips = 1000
+        self.update_display()
+        self.message_label.config(text="Chips reset to $1000 for both players")
+
+    def update_display(self, show_computer_hand=False):
         player_hand = self.game.get_player_hand()
         for widget in self.player_hand_frame.winfo_children():
             widget.destroy()
         create_card_display(self.player_hand_frame, player_hand).pack()
+
+        computer_hand = self.game.get_computer_hand()
+        for widget in self.computer_hand_frame.winfo_children():
+            widget.destroy()
+        if show_computer_hand:
+            create_card_display(self.computer_hand_frame, computer_hand).pack()
 
         community_cards = self.game.get_community_cards()
         for widget in self.community_cards_frame.winfo_children():

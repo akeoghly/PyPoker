@@ -10,14 +10,14 @@ class CardUI(tk.Frame):
     
     def __init__(self, master, card, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        self.config(width=50, height=70, relief=tk.RAISED, borderwidth=2)
+        self.config(width=50, height=70, relief=tk.RAISED, borderwidth=2, bg="white")
         
-        self.value_label = tk.Label(self, text=card.value, font=("Arial", 14, "bold"))
+        self.value_label = tk.Label(self, text=card.value, font=("Arial", 14, "bold"), bg="white")
         self.value_label.pack(pady=(5, 0))
         
         suit_symbol = self.SUITS.get(card.suit, card.suit)
         suit_color = "red" if card.suit in ["Hearts", "Diamonds"] else "black"
-        self.suit_label = tk.Label(self, text=suit_symbol, font=("Arial", 24), fg=suit_color)
+        self.suit_label = tk.Label(self, text=suit_symbol, font=("Arial", 24), fg=suit_color, bg="white")
         self.suit_label.pack(expand=True)
 
 def create_card_display(master, cards):

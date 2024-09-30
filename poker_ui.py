@@ -224,7 +224,9 @@ class PokerUI:
         hand_rank = evaluate_hand(all_cards)
         
         for i, label in enumerate(self.cheatsheet_labels):
-            if i == hand_rank:
+            if i == 0:  # Title label
+                label.config(bg="white")
+            elif i == hand_rank + 1:  # +1 because the first label is the title
                 label.config(bg="yellow")
             else:
                 label.config(bg="white")

@@ -89,7 +89,7 @@ class PokerUI:
         self.show_computer_cards_checkbox.grid(row=15, column=0, sticky="w")
 
         self.message_label = tk.Label(self.main_frame, text="")
-        self.message_label.grid(row=15, column=0, sticky="w")
+        self.message_label.grid(row=16, column=0, sticky="w")
 
         self.create_cheatsheet()
 

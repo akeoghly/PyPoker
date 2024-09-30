@@ -82,6 +82,12 @@ class PokerUI:
                                                   command=self.toggle_cheatsheet)
         self.cheatsheet_checkbox.grid(row=14, column=0, sticky="w")
 
+        self.show_computer_cards_var = tk.BooleanVar()
+        self.show_computer_cards_checkbox = tk.Checkbutton(self.main_frame, text="Show Computer's Cards", 
+                                                           variable=self.show_computer_cards_var, 
+                                                           command=self.update_display)
+        self.show_computer_cards_checkbox.grid(row=15, column=0, sticky="w")
+
         self.message_label = tk.Label(self.main_frame, text="")
         self.message_label.grid(row=15, column=0, sticky="w")
 
@@ -148,7 +154,7 @@ class PokerUI:
                 self.message_label.config(text="Round ended")
         self.disable_action_buttons()
         self.deal_button.config(state=tk.NORMAL)
-        self.update_display(show_computer_hand=True)
+        self.update_display()
 
     def reset_chips(self):
         for player in self.game.players:
@@ -156,7 +162,7 @@ class PokerUI:
         self.update_display()
         self.message_label.config(text="Chips reset to $1000 for both players")
 
-    def update_display(self, show_computer_hand=False):
+    def update_display(self):
         player_hand = self.game.get_player_hand()
         for widget in self.player_hand_frame.winfo_children():
             widget.destroy()
@@ -167,7 +173,7 @@ class PokerUI:
         for widget in self.computer_hand_frame.winfo_children():
             widget.destroy()
         if computer_hand:
-            if show_computer_hand:
+            if self.show_computer_cards_var.get():
                 create_card_display(self.computer_hand_frame, computer_hand).pack()
             else:
                 # Display face-down cards for the computer's hand

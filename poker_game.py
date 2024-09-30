@@ -76,11 +76,26 @@ class PokerGame:
         self.pot = 0
         self.current_player = 0
         self.stage = "preflop"
+        self.small_blind = 5
+        self.big_blind = 10
+        self.dealer_index = 0
 
     def deal_initial_hands(self):
+        self.post_blinds()
         for _ in range(2):
             for player in self.players:
                 player.add_card(self.deck.draw())
+
+    def post_blinds(self):
+        small_blind_index = (self.dealer_index + 1) % len(self.players)
+        big_blind_index = (self.dealer_index + 2) % len(self.players)
+        
+        self.players[small_blind_index].place_bet(self.small_blind)
+        self.players[big_blind_index].place_bet(self.big_blind)
+        self.pot += self.small_blind + self.big_blind
+
+    def next_dealer(self):
+        self.dealer_index = (self.dealer_index + 1) % len(self.players)
 
     def deal_flop(self):
         self.community_cards = [self.deck.draw() for _ in range(3)]

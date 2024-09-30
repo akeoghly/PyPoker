@@ -46,6 +46,12 @@ class PokerUI:
         self.computer_chips_label = tk.Label(self.main_frame, text="Computer Chips: $1000")
         self.computer_chips_label.grid(row=6, column=0, sticky="w")
 
+        self.blinds_label = tk.Label(self.main_frame, text=f"Blinds: ${self.game.small_blind}/{self.game.big_blind}")
+        self.blinds_label.grid(row=7, column=0, sticky="w")
+
+        self.dealer_label = tk.Label(self.main_frame, text="Dealer: Player")
+        self.dealer_label.grid(row=8, column=0, sticky="w")
+
         self.action_frame = tk.Frame(self.main_frame)
         self.action_frame.grid(row=7, column=0, sticky="ew")
 
@@ -132,6 +138,7 @@ class PokerUI:
 
     def new_game(self):
         self.game.reset_game()
+        self.game.next_dealer()
         self.update_display()
         self.deal_button.config(state=tk.NORMAL)
         self.disable_action_buttons()
@@ -151,6 +158,8 @@ class PokerUI:
         self.pot_label.config(text=f"Pot: ${self.game.pot}")
         self.player_chips_label.config(text=f"Your Chips: ${self.game.players[0].chips}")
         self.computer_chips_label.config(text=f"Computer Chips: ${self.game.players[1].chips}")
+        self.blinds_label.config(text=f"Blinds: ${self.game.small_blind}/{self.game.big_blind}")
+        self.dealer_label.config(text=f"Dealer: {'Player' if self.game.dealer_index == 0 else 'Computer'}")
 
         if self.cheatsheet_var.get():
             self.update_cheatsheet()

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from poker_game import PokerGame
+from poker_game import PokerGame, evaluate_hand
 from card_ui import create_card_display
 
 class PokerUI:
@@ -145,6 +145,9 @@ class PokerUI:
         self.player_chips_label.config(text=f"Your Chips: ${self.game.players[0].chips}")
         self.computer_chips_label.config(text=f"Computer Chips: ${self.game.players[1].chips}")
 
+        if self.cheatsheet_var.get():
+            self.update_cheatsheet()
+
     def open_bet_window(self):
         bet_window = tk.Toplevel(self.master)
         bet_window.title("Place Your Bet")
@@ -180,29 +183,44 @@ class PokerUI:
         self.bet_button.config(state=tk.DISABLED)
 
     def create_cheatsheet(self):
-        cheatsheet_text = """
-Poker Hand Rankings:
-1. Royal Flush: A, K, Q, J, 10 of the same suit
-2. Straight Flush: Five consecutive cards of the same suit
-3. Four of a Kind: Four cards of the same rank
-4. Full House: Three of a kind plus a pair
-5. Flush: Any five cards of the same suit
-6. Straight: Five consecutive cards of any suit
-7. Three of a Kind: Three cards of the same rank
-8. Two Pair: Two different pairs
-9. One Pair: Two cards of the same rank
-10. High Card: Highest card plays if no other hand
-        """
-        self.cheatsheet_label = tk.Label(self.cheatsheet_frame, text=cheatsheet_text, 
-                                         justify=tk.LEFT, font=("Arial", 10))
-        self.cheatsheet_label.pack()
+        self.cheatsheet_labels = []
+        cheatsheet_text = [
+            "Poker Hand Rankings:",
+            "1. Royal Flush: A, K, Q, J, 10 of the same suit",
+            "2. Straight Flush: Five consecutive cards of the same suit",
+            "3. Four of a Kind: Four cards of the same rank",
+            "4. Full House: Three of a kind plus a pair",
+            "5. Flush: Any five cards of the same suit",
+            "6. Straight: Five consecutive cards of any suit",
+            "7. Three of a Kind: Three cards of the same rank",
+            "8. Two Pair: Two different pairs",
+            "9. One Pair: Two cards of the same rank",
+            "10. High Card: Highest card plays if no other hand"
+        ]
+        for line in cheatsheet_text:
+            label = tk.Label(self.cheatsheet_frame, text=line, justify=tk.LEFT, font=("Arial", 10))
+            label.pack(anchor="w")
+            self.cheatsheet_labels.append(label)
         self.cheatsheet_frame.pack_forget()  # Initially hide the cheatsheet
 
     def toggle_cheatsheet(self):
         if self.cheatsheet_var.get():
             self.cheatsheet_frame.pack(side=tk.RIGHT, padx=10, pady=10)
+            self.update_cheatsheet()
         else:
             self.cheatsheet_frame.pack_forget()
+
+    def update_cheatsheet(self):
+        player_hand = self.game.get_player_hand()
+        community_cards = self.game.get_community_cards()
+        all_cards = player_hand + community_cards
+        hand_rank = evaluate_hand(all_cards)
+        
+        for i, label in enumerate(self.cheatsheet_labels):
+            if i == hand_rank:
+                label.config(bg="yellow")
+            else:
+                label.config(bg="white")
 
 if __name__ == "__main__":
     root = tk.Tk()

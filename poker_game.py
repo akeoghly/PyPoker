@@ -43,6 +43,31 @@ class Player:
     def fold(self):
         self.hand = []
 
+def evaluate_hand(cards):
+    # This is a simplified hand evaluation function
+    # It returns the rank of the hand (0-9, where 0 is the highest hand)
+    values = [card.value for card in cards]
+    suits = [card.suit for card in cards]
+    
+    # Check for flush
+    if len(set(suits)) == 1:
+        return 4  # Flush
+    
+    # Check for pairs, three of a kind, etc.
+    value_counts = {value: values.count(value) for value in set(values)}
+    if 4 in value_counts.values():
+        return 3  # Four of a kind
+    elif 3 in value_counts.values() and 2 in value_counts.values():
+        return 4  # Full house
+    elif 3 in value_counts.values():
+        return 6  # Three of a kind
+    elif list(value_counts.values()).count(2) == 2:
+        return 7  # Two pair
+    elif 2 in value_counts.values():
+        return 8  # One pair
+    else:
+        return 9  # High card
+
 class PokerGame:
     def __init__(self):
         self.deck = Deck()

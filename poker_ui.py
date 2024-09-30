@@ -101,7 +101,7 @@ class PokerUI:
         self.message_label.config(text=f"Player {result}")
         self.update_display()
         if action == "fold":
-            self.show_results("Computer wins!")
+            self.show_results("Computer wins!", show_computer_hand=True)
         else:
             self.game.next_player()
             self.bot_turn()
@@ -111,7 +111,7 @@ class PokerUI:
         self.message_label.config(text=f"Computer {result}")
         self.update_display()
         if result == "fold":
-            self.show_results("Player wins!")
+            self.show_results("Player wins!", show_computer_hand=True)
         else:
             self.game.next_player()
             self.next_stage()
@@ -128,7 +128,7 @@ class PokerUI:
             self.show_results()
         self.update_display()
 
-    def show_results(self, message=None):
+    def show_results(self, message=None, show_computer_hand=False):
         if message:
             self.message_label.config(text=message)
         else:
@@ -137,19 +137,23 @@ class PokerUI:
             computer_card = self.game.get_computer_hand()[-1]
             if player_card.value > computer_card.value:
                 self.message_label.config(text="You win!")
+                show_computer_hand = True
             elif player_card.value < computer_card.value:
                 self.message_label.config(text="Computer wins!")
+                show_computer_hand = True
             else:
                 self.message_label.config(text="It's a tie!")
+                show_computer_hand = True
         self.disable_action_buttons()
         self.deal_button.config(state=tk.NORMAL)
-        self.update_display(show_computer_hand=True)
+        self.update_display(show_computer_hand=show_computer_hand)
         
-        # Force update of the computer's hand display
-        computer_hand = self.game.get_computer_hand()
-        for widget in self.computer_hand_frame.winfo_children():
-            widget.destroy()
-        create_card_display(self.computer_hand_frame, computer_hand).pack()
+        if show_computer_hand:
+            # Force update of the computer's hand display
+            computer_hand = self.game.get_computer_hand()
+            for widget in self.computer_hand_frame.winfo_children():
+                widget.destroy()
+            create_card_display(self.computer_hand_frame, computer_hand).pack()
 
     def reset_chips(self):
         for player in self.game.players:

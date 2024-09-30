@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from poker_game import PokerGame, evaluate_hand
+from poker_game import PokerGame, evaluate_hand, Card
 from card_ui import create_card_display
 
 class PokerUI:

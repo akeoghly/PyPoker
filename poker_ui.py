@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from poker_game import PokerGame
 from card_ui import create_card_display
 
@@ -50,6 +51,9 @@ class PokerUI:
 
         self.new_game_button = tk.Button(self.master, text="New Game", command=self.new_game)
         self.new_game_button.pack()
+
+        self.cheatsheet_button = tk.Button(self.master, text="Cheatsheet", command=self.show_cheatsheet)
+        self.cheatsheet_button.pack()
 
         self.message_label = tk.Label(self.master, text="")
         self.message_label.pack()
@@ -164,6 +168,22 @@ class PokerUI:
         self.fold_button.config(state=tk.DISABLED)
         self.check_button.config(state=tk.DISABLED)
         self.bet_button.config(state=tk.DISABLED)
+
+    def show_cheatsheet(self):
+        cheatsheet = """
+        Poker Hand Rankings:
+        1. Royal Flush: A, K, Q, J, 10 of the same suit
+        2. Straight Flush: Five consecutive cards of the same suit
+        3. Four of a Kind: Four cards of the same rank
+        4. Full House: Three of a kind plus a pair
+        5. Flush: Any five cards of the same suit
+        6. Straight: Five consecutive cards of any suit
+        7. Three of a Kind: Three cards of the same rank
+        8. Two Pair: Two different pairs
+        9. One Pair: Two cards of the same rank
+        10. High Card: Highest card plays if no other hand
+        """
+        messagebox.showinfo("Poker Hand Rankings", cheatsheet)
 
 if __name__ == "__main__":
     root = tk.Tk()

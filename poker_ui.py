@@ -324,7 +324,17 @@ class PokerUI:
             for child in widget.winfo_children():
                 self.update_widget_fonts(child, scale_factor)
 
+import traceback
+import logging
+
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = PokerUI(root)
-    root.mainloop()
+    logging.basicConfig(filename='poker_error.log', level=logging.ERROR)
+    try:
+        root = tk.Tk()
+        app = PokerUI(root)
+        root.mainloop()
+    except Exception as e:
+        logging.error("An error occurred: %s", str(e))
+        logging.error(traceback.format_exc())
+        print(f"An error occurred: {str(e)}")
+        print("Please check the 'poker_error.log' file for more details.")

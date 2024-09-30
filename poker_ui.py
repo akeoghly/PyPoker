@@ -137,6 +137,11 @@ class PokerUI:
     def end_round(self, message=None):
         if message:
             self.message_label.config(text=message)
+            if "Player wins" in message:
+                self.game.player_action("win")
+            elif "Computer wins" in message:
+                self.game.current_player = 1  # Set to computer
+                self.game.player_action("win")
         else:
             # For simplicity, we'll just compare the last card of each player
             player_hand = self.game.get_player_hand()
@@ -146,10 +151,17 @@ class PokerUI:
                 computer_card = computer_hand[-1]
                 if player_card.value > computer_card.value:
                     self.message_label.config(text="You win!")
+                    self.game.player_action("win")
                 elif player_card.value < computer_card.value:
                     self.message_label.config(text="Computer wins!")
+                    self.game.current_player = 1  # Set to computer
+                    self.game.player_action("win")
                 else:
                     self.message_label.config(text="It's a tie!")
+                    # In case of a tie, split the pot
+                    self.game.players[0].chips += self.game.pot // 2
+                    self.game.players[1].chips += self.game.pot // 2
+                    self.game.pot = 0
             else:
                 self.message_label.config(text="Round ended")
         self.disable_action_buttons()

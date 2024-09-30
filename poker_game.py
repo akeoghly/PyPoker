@@ -142,6 +142,10 @@ class PokerGame:
             bet_amount = player.place_bet(amount)
             self.pot += bet_amount
             return f"bet {bet_amount}"
+        elif action == "win":
+            player.chips += self.pot
+            self.pot = 0
+            return "win"
 
     def bot_action(self):
         actions = ["fold", "check", "bet"]

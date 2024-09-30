@@ -198,7 +198,7 @@ class PokerUI:
             "10. High Card: Highest card plays if no other hand"
         ]
         for line in cheatsheet_text:
-            label = tk.Label(self.cheatsheet_frame, text=line, justify=tk.LEFT, font=("Arial", 10))
+            label = tk.Label(self.cheatsheet_frame, text=line, justify=tk.LEFT, font=("Arial", 10), fg="black")
             label.pack(anchor="w")
             self.cheatsheet_labels.append(label)
         self.cheatsheet_frame.pack_forget()  # Initially hide the cheatsheet

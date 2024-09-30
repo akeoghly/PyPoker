@@ -1,5 +1,6 @@
 import tkinter as tk
 from poker_game import PokerGame
+from card_ui import create_card_display
 
 class PokerUI:
     def __init__(self, master):
@@ -14,14 +15,14 @@ class PokerUI:
         self.player_hand_label = tk.Label(self.master, text="Your Hand:")
         self.player_hand_label.pack()
 
-        self.player_hand_display = tk.Label(self.master, text="")
-        self.player_hand_display.pack()
+        self.player_hand_frame = tk.Frame(self.master)
+        self.player_hand_frame.pack()
 
         self.community_cards_label = tk.Label(self.master, text="Community Cards:")
         self.community_cards_label.pack()
 
-        self.community_cards_display = tk.Label(self.master, text="")
-        self.community_cards_display.pack()
+        self.community_cards_frame = tk.Frame(self.master)
+        self.community_cards_frame.pack()
 
         self.pot_label = tk.Label(self.master, text="Pot: $0")
         self.pot_label.pack()
@@ -117,10 +118,14 @@ class PokerUI:
 
     def update_display(self):
         player_hand = self.game.get_player_hand()
-        self.player_hand_display.config(text=", ".join(str(card) for card in player_hand))
+        for widget in self.player_hand_frame.winfo_children():
+            widget.destroy()
+        create_card_display(self.player_hand_frame, player_hand).pack()
 
         community_cards = self.game.get_community_cards()
-        self.community_cards_display.config(text=", ".join(str(card) for card in community_cards))
+        for widget in self.community_cards_frame.winfo_children():
+            widget.destroy()
+        create_card_display(self.community_cards_frame, community_cards).pack()
 
         self.pot_label.config(text=f"Pot: ${self.game.pot}")
         self.player_chips_label.config(text=f"Your Chips: ${self.game.players[0].chips}")

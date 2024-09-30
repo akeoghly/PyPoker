@@ -90,8 +90,11 @@ class PokerGame:
 
     def player_action(self, action, amount=0):
         player = self.players[self.current_player]
+        opponent = self.players[(self.current_player + 1) % 2]
         if action == "fold":
             player.fold()
+            opponent.chips += self.pot
+            self.pot = 0
             return "fold"
         elif action == "check":
             return "check"

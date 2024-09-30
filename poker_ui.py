@@ -63,15 +63,23 @@ class PokerUI:
         result = self.game.player_action(action, amount)
         self.message_label.config(text=f"Player {result}")
         self.update_display()
-        self.game.next_player()
-        self.bot_turn()
+        if action == "fold":
+            self.show_results("Computer wins!")
+            self.master.after(2000, self.new_game)
+        else:
+            self.game.next_player()
+            self.bot_turn()
 
     def bot_turn(self):
         result = self.game.bot_action()
         self.message_label.config(text=f"Computer {result}")
         self.update_display()
-        self.game.next_player()
-        self.next_stage()
+        if result == "fold":
+            self.show_results("Player wins!")
+            self.master.after(2000, self.new_game)
+        else:
+            self.game.next_player()
+            self.next_stage()
 
     def next_stage(self):
         if self.game.stage == "preflop":
@@ -85,16 +93,19 @@ class PokerUI:
             self.show_results()
         self.update_display()
 
-    def show_results(self):
-        # For simplicity, we'll just compare the last card of each player
-        player_card = self.game.get_player_hand()[-1]
-        computer_card = self.game.get_computer_hand()[-1]
-        if player_card.value > computer_card.value:
-            self.message_label.config(text="You win!")
-        elif player_card.value < computer_card.value:
-            self.message_label.config(text="Computer wins!")
+    def show_results(self, message=None):
+        if message:
+            self.message_label.config(text=message)
         else:
-            self.message_label.config(text="It's a tie!")
+            # For simplicity, we'll just compare the last card of each player
+            player_card = self.game.get_player_hand()[-1]
+            computer_card = self.game.get_computer_hand()[-1]
+            if player_card.value > computer_card.value:
+                self.message_label.config(text="You win!")
+            elif player_card.value < computer_card.value:
+                self.message_label.config(text="Computer wins!")
+            else:
+                self.message_label.config(text="It's a tie!")
         self.disable_action_buttons()
 
     def new_game(self):

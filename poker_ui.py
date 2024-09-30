@@ -155,6 +155,8 @@ class PokerUI:
         self.disable_action_buttons()
         self.deal_button.config(state=tk.NORMAL)
         self.update_display()
+        # Force show computer's cards at the end of the round
+        self.show_computer_cards(True)
 
     def reset_chips(self):
         for player in self.game.players:
@@ -184,6 +186,9 @@ class PokerUI:
         for widget in self.community_cards_frame.winfo_children():
             widget.destroy()
         create_card_display(self.community_cards_frame, community_cards).pack()
+
+        # Update the checkbox state
+        self.show_computer_cards_checkbox.config(state=tk.NORMAL if computer_hand else tk.DISABLED)
 
         self.pot_label.config(text=f"Pot: ${self.game.pot}")
         self.player_chips_label.config(text=f"Your Chips: ${self.game.players[0].chips}")
@@ -269,6 +274,11 @@ class PokerUI:
                 label.config(bg="yellow")
             else:
                 label.config(bg="white")
+
+    def show_computer_cards(self, show=None):
+        if show is not None:
+            self.show_computer_cards_var.set(show)
+        self.update_display()
 
 if __name__ == "__main__":
     root = tk.Tk()

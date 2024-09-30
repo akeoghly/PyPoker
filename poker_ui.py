@@ -13,34 +13,41 @@ class PokerUI:
         self.update_display()
 
     def create_widgets(self):
+        self.master.grid_columnconfigure(0, weight=1)
+        self.master.grid_columnconfigure(1, weight=1)
+        self.master.grid_rowconfigure(0, weight=1)
+
         self.main_frame = tk.Frame(self.master)
-        self.main_frame.pack(side=tk.LEFT, padx=10, pady=10)
+        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.main_frame.grid_columnconfigure(0, weight=1)
 
         self.cheatsheet_frame = tk.Frame(self.master)
-        self.cheatsheet_frame.pack(side=tk.RIGHT, padx=10, pady=10)
-        self.player_hand_label = tk.Label(self.master, text="Your Hand:")
-        self.player_hand_label.pack()
+        self.cheatsheet_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        self.cheatsheet_frame.grid_columnconfigure(0, weight=1)
 
-        self.player_hand_frame = tk.Frame(self.master)
-        self.player_hand_frame.pack()
+        self.player_hand_label = tk.Label(self.main_frame, text="Your Hand:")
+        self.player_hand_label.grid(row=0, column=0, sticky="w")
 
-        self.community_cards_label = tk.Label(self.master, text="Community Cards:")
-        self.community_cards_label.pack()
+        self.player_hand_frame = tk.Frame(self.main_frame)
+        self.player_hand_frame.grid(row=1, column=0, sticky="ew")
 
-        self.community_cards_frame = tk.Frame(self.master)
-        self.community_cards_frame.pack()
+        self.community_cards_label = tk.Label(self.main_frame, text="Community Cards:")
+        self.community_cards_label.grid(row=2, column=0, sticky="w")
 
-        self.pot_label = tk.Label(self.master, text="Pot: $0")
-        self.pot_label.pack()
+        self.community_cards_frame = tk.Frame(self.main_frame)
+        self.community_cards_frame.grid(row=3, column=0, sticky="ew")
 
-        self.player_chips_label = tk.Label(self.master, text="Your Chips: $1000")
-        self.player_chips_label.pack()
+        self.pot_label = tk.Label(self.main_frame, text="Pot: $0")
+        self.pot_label.grid(row=4, column=0, sticky="w")
 
-        self.computer_chips_label = tk.Label(self.master, text="Computer Chips: $1000")
-        self.computer_chips_label.pack()
+        self.player_chips_label = tk.Label(self.main_frame, text="Your Chips: $1000")
+        self.player_chips_label.grid(row=5, column=0, sticky="w")
 
-        self.action_frame = tk.Frame(self.master)
-        self.action_frame.pack()
+        self.computer_chips_label = tk.Label(self.main_frame, text="Computer Chips: $1000")
+        self.computer_chips_label.grid(row=6, column=0, sticky="w")
+
+        self.action_frame = tk.Frame(self.main_frame)
+        self.action_frame.grid(row=7, column=0, sticky="ew")
 
         self.fold_button = tk.Button(self.action_frame, text="Fold", command=lambda: self.player_action("fold"))
         self.fold_button.pack(side=tk.LEFT)
@@ -51,20 +58,20 @@ class PokerUI:
         self.bet_button = tk.Button(self.action_frame, text="Bet", command=self.open_bet_window)
         self.bet_button.pack(side=tk.LEFT)
 
-        self.deal_button = tk.Button(self.master, text="Deal", command=self.deal)
-        self.deal_button.pack()
+        self.deal_button = tk.Button(self.main_frame, text="Deal", command=self.deal)
+        self.deal_button.grid(row=8, column=0, sticky="ew")
 
-        self.new_game_button = tk.Button(self.master, text="New Game", command=self.new_game)
-        self.new_game_button.pack()
+        self.new_game_button = tk.Button(self.main_frame, text="New Game", command=self.new_game)
+        self.new_game_button.grid(row=9, column=0, sticky="ew")
 
         self.cheatsheet_var = tk.BooleanVar()
         self.cheatsheet_checkbox = tk.Checkbutton(self.main_frame, text="Show Cheatsheet", 
                                                   variable=self.cheatsheet_var, 
                                                   command=self.toggle_cheatsheet)
-        self.cheatsheet_checkbox.pack()
+        self.cheatsheet_checkbox.grid(row=10, column=0, sticky="w")
 
         self.message_label = tk.Label(self.main_frame, text="")
-        self.message_label.pack()
+        self.message_label.grid(row=11, column=0, sticky="w")
 
         self.create_cheatsheet()
 
@@ -197,18 +204,18 @@ class PokerUI:
             "9. One Pair: Two cards of the same rank",
             "10. High Card: Highest card plays if no other hand"
         ]
-        for line in cheatsheet_text:
+        for i, line in enumerate(cheatsheet_text):
             label = tk.Label(self.cheatsheet_frame, text=line, justify=tk.LEFT, font=("Arial", 10), fg="black")
-            label.pack(anchor="w")
+            label.grid(row=i, column=0, sticky="w")
             self.cheatsheet_labels.append(label)
-        self.cheatsheet_frame.pack_forget()  # Initially hide the cheatsheet
+        self.cheatsheet_frame.grid_remove()  # Initially hide the cheatsheet
 
     def toggle_cheatsheet(self):
         if self.cheatsheet_var.get():
-            self.cheatsheet_frame.pack(side=tk.RIGHT, padx=10, pady=10)
+            self.cheatsheet_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
             self.update_cheatsheet()
         else:
-            self.cheatsheet_frame.pack_forget()
+            self.cheatsheet_frame.grid_remove()
 
     def update_cheatsheet(self):
         player_hand = self.game.get_player_hand()

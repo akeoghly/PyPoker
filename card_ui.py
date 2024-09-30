@@ -12,7 +12,7 @@ class CardUI(tk.Frame):
         super().__init__(master, *args, **kwargs)
         self.config(width=50, height=70, relief=tk.RAISED, borderwidth=2, bg="white")
         
-        self.value_label = tk.Label(self, text=card.value, font=("Arial", 14, "bold"), bg="white")
+        self.value_label = tk.Label(self, text=card.value, font=("Arial", 14, "bold"), bg="white", fg="black")
         self.value_label.pack(pady=(5, 0))
         
         suit_symbol = self.SUITS.get(card.suit, card.suit)

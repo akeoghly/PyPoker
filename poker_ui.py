@@ -144,6 +144,12 @@ class PokerUI:
         self.disable_action_buttons()
         self.deal_button.config(state=tk.NORMAL)
         self.update_display(show_computer_hand=True)
+        
+        # Force update of the computer's hand display
+        computer_hand = self.game.get_computer_hand()
+        for widget in self.computer_hand_frame.winfo_children():
+            widget.destroy()
+        create_card_display(self.computer_hand_frame, computer_hand).pack()
 
     def reset_chips(self):
         for player in self.game.players:

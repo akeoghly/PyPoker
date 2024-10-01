@@ -11,30 +11,16 @@ class PokerUI:
 
         self.create_widgets()
         self.update_display()
-        self.master.bind("<Configure>", self.on_window_resize)
 
     def create_widgets(self):
-        self.master.grid_columnconfigure(0, weight=1)
-        self.master.grid_columnconfigure(1, weight=1)
-        self.master.grid_rowconfigure(0, weight=1)
-
         self.main_frame = tk.Frame(self.master)
-        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
-        self.main_frame.grid_columnconfigure(0, weight=1)
-        for i in range(17):  # Assuming 17 rows based on the original layout
-            self.main_frame.grid_rowconfigure(i, weight=1)
+        self.main_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         self.cheatsheet_frame = tk.Frame(self.master)
-        self.cheatsheet_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
-        self.cheatsheet_frame.grid_columnconfigure(0, weight=1)
-        for i in range(11):  # 11 rows for cheatsheet items
-            self.cheatsheet_frame.grid_rowconfigure(i, weight=1)
-
-        self.default_font = font.nametofont("TkDefaultFont")
-        self.default_font_size = self.default_font.cget("size")
+        self.cheatsheet_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         self.player_hand_label = tk.Label(self.main_frame, text="Your Hand:")
-        self.player_hand_label.grid(row=0, column=0, sticky="w")
+        self.player_hand_label.pack(anchor="w")
 
         self.player_hand_frame = tk.Frame(self.main_frame)
         self.player_hand_frame.grid(row=1, column=0, sticky="ew")
@@ -300,29 +286,6 @@ class PokerUI:
             self.show_computer_cards_var.set(show)
         self.update_display()
 
-    def on_window_resize(self, event):
-        # Calculate new font size based on window width
-        new_size = max(int(event.width / 100), 8)  # Minimum font size of 8
-        scale_factor = new_size / self.default_font_size
-
-        # Update font sizes
-        for widget in self.master.winfo_children():
-            self.update_widget_fonts(widget, scale_factor)
-
-        # Update card sizes
-        self.update_display()
-
-    def update_widget_fonts(self, widget, scale_factor):
-        try:
-            current_font = font.nametofont(widget.cget("font"))
-            new_size = max(int(current_font.cget("size") * scale_factor), 8)
-            widget.configure(font=(current_font.cget("family"), new_size))
-        except:
-            pass  # Some widgets might not have a font property
-
-        if widget.winfo_children():
-            for child in widget.winfo_children():
-                self.update_widget_fonts(child, scale_factor)
 
 import traceback
 import logging

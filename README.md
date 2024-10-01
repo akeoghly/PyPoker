@@ -1,6 +1,6 @@
 Steps:
 
-1. Download all files
+1. Download PyPoker.zip
 2. Run poker_ui.py
 3. Enjoy :)
 

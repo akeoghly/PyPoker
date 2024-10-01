@@ -116,8 +116,10 @@ class PokerUI:
         self.update_display()
         self.deal_button.config(state=tk.DISABLED)
         self.enable_action_buttons()
-        for widget in self.computer_hand_frame.winfo_children():
-            widget.destroy()
+        for i in range(self.num_computers):
+            frame = getattr(self, f"computer_hand_frame_{i}")
+            for widget in frame.winfo_children():
+                widget.destroy()
 
     def player_action(self, action, amount=0):
         result = self.game.player_action(action, amount)

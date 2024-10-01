@@ -69,9 +69,9 @@ def evaluate_hand(cards):
         return 9  # High card
 
 class PokerGame:
-    def __init__(self):
+    def __init__(self, num_computers=1):
         self.deck = Deck()
-        self.players = [Player("Player"), Player("Computer")]
+        self.players = [Player("Player")] + [Player(f"Computer {i+1}") for i in range(num_computers)]
         self.community_cards = []
         self.pot = 0
         self.current_player = 0
@@ -94,6 +94,7 @@ class PokerGame:
         self.players[small_blind_index].place_bet(self.small_blind)
         self.players[big_blind_index].place_bet(self.big_blind)
         self.pot += self.small_blind + self.big_blind
+        self.current_player = (big_blind_index + 1) % len(self.players)
 
     def next_dealer(self):
         self.dealer_index = (self.dealer_index + 1) % len(self.players)
@@ -123,8 +124,8 @@ class PokerGame:
     def get_player_hand(self):
         return self.players[0].hand
 
-    def get_computer_hand(self):
-        return self.players[1].hand
+    def get_computer_hands(self):
+        return [player.hand for player in self.players[1:]]
 
     def get_community_cards(self):
         return self.community_cards
@@ -158,6 +159,12 @@ class PokerGame:
             amount = random.randint(10, 100)
             return self.player_action(action, amount)
         return self.player_action(action)
+
+    def is_human_player(self):
+        return self.current_player == 0
+
+    def is_round_over(self):
+        return len([p for p in self.players if p.hand]) <= 1 or self.stage == "showdown"
 
     def log_move(self, player_name, action):
         if action == "win":

@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, font
+from tkinter import messagebox, font, simpledialog
 from poker_game import PokerGame, evaluate_hand, Card
 from card_ui import create_card_display
 
@@ -7,10 +7,14 @@ class PokerUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Simple Poker Game")
-        self.game = PokerGame()
+        self.num_computers = self.get_num_computers()
+        self.game = PokerGame(self.num_computers)
 
         self.create_widgets()
         self.update_display()
+
+    def get_num_computers(self):
+        return simpledialog.askinteger("Number of Computers", "How many computer opponents? (1-3)", minvalue=1, maxvalue=3)
 
     def create_widgets(self):
         self.main_frame = tk.Frame(self.master)
@@ -25,11 +29,15 @@ class PokerUI:
         self.player_hand_frame = tk.Frame(self.main_frame)
         self.player_hand_frame.pack(anchor="w", pady=5)
 
-        self.computer_hand_label = tk.Label(self.main_frame, text="Computer's Hand:")
-        self.computer_hand_label.pack(anchor="w")
+        self.computer_hands_frame = tk.Frame(self.main_frame)
+        self.computer_hands_frame.pack(anchor="w", pady=5)
 
-        self.computer_hand_frame = tk.Frame(self.main_frame)
-        self.computer_hand_frame.pack(anchor="w", pady=5)
+        for i in range(self.num_computers):
+            label = tk.Label(self.computer_hands_frame, text=f"Computer {i+1}'s Hand:")
+            label.pack(anchor="w")
+            frame = tk.Frame(self.computer_hands_frame)
+            frame.pack(anchor="w", pady=5)
+            setattr(self, f"computer_hand_frame_{i}", frame)
 
         self.community_cards_label = tk.Label(self.main_frame, text="Community Cards:")
         self.community_cards_label.pack(anchor="w")
@@ -43,8 +51,11 @@ class PokerUI:
         self.player_chips_label = tk.Label(self.main_frame, text="Your Chips: $1000")
         self.player_chips_label.pack(anchor="w")
 
-        self.computer_chips_label = tk.Label(self.main_frame, text="Computer Chips: $1000")
-        self.computer_chips_label.pack(anchor="w")
+        self.computer_chips_labels = []
+        for i in range(self.num_computers):
+            label = tk.Label(self.main_frame, text=f"Computer {i+1} Chips: $1000")
+            label.pack(anchor="w")
+            self.computer_chips_labels.append(label)
 
         self.blinds_label = tk.Label(self.main_frame, text=f"Blinds: ${self.game.small_blind}/{self.game.big_blind}")
         self.blinds_label.pack(anchor="w")
@@ -119,13 +130,17 @@ class PokerUI:
             self.bot_turn()
 
     def bot_turn(self):
-        result = self.game.bot_action()
-        self.message_label.config(text=f"Computer {result}")
-        self.update_display()
-        if result == "fold":
-            self.end_round("Player wins!")
-        else:
+        while not self.game.is_human_player() and not self.game.is_round_over():
+            result = self.game.bot_action()
+            self.message_label.config(text=f"{self.game.players[self.game.current_player].name} {result}")
+            self.update_display()
+            if result == "fold":
+                if self.game.is_round_over():
+                    self.end_round("Player wins!")
+                    return
             self.game.next_player()
+        
+        if not self.game.is_round_over():
             self.next_stage()
 
     def next_stage(self):
@@ -192,16 +207,18 @@ class PokerUI:
         if player_hand:
             create_card_display(self.player_hand_frame, player_hand).pack()
 
-        computer_hand = self.game.get_computer_hand()
-        for widget in self.computer_hand_frame.winfo_children():
-            widget.destroy()
-        if computer_hand:
-            if self.show_computer_cards_var.get():
-                create_card_display(self.computer_hand_frame, computer_hand).pack()
-            else:
-                # Display face-down cards for the computer's hand
-                face_down_cards = [Card('', '') for _ in range(len(computer_hand))]
-                create_card_display(self.computer_hand_frame, face_down_cards).pack()
+        computer_hands = self.game.get_computer_hands()
+        for i, hand in enumerate(computer_hands):
+            frame = getattr(self, f"computer_hand_frame_{i}")
+            for widget in frame.winfo_children():
+                widget.destroy()
+            if hand:
+                if self.show_computer_cards_var.get():
+                    create_card_display(frame, hand).pack()
+                else:
+                    # Display face-down cards for the computer's hand
+                    face_down_cards = [Card('', '') for _ in range(len(hand))]
+                    create_card_display(frame, face_down_cards).pack()
 
         community_cards = self.game.get_community_cards()
         for widget in self.community_cards_frame.winfo_children():
@@ -213,7 +230,8 @@ class PokerUI:
 
         self.pot_label.config(text=f"Pot: ${self.game.pot}")
         self.player_chips_label.config(text=f"Your Chips: ${self.game.players[0].chips}")
-        self.computer_chips_label.config(text=f"Computer Chips: ${self.game.players[1].chips}")
+        for i, label in enumerate(self.computer_chips_labels):
+            label.config(text=f"Computer {i+1} Chips: ${self.game.players[i+1].chips}")
         self.blinds_label.config(text=f"Blinds: ${self.game.small_blind}/{self.game.big_blind}")
         self.dealer_label.config(text=f"Dealer: {'Player' if self.game.dealer_index == 0 else 'Computer'}")
 

@@ -85,6 +85,18 @@ class PokerUI:
         self.message_label = tk.Label(self.main_frame, text="")
         self.message_label.pack(anchor="w", pady=5)
 
+        self.move_log_label = tk.Label(self.main_frame, text="Last 5 Moves:")
+        self.move_log_label.pack(anchor="w", pady=(10, 0))
+
+        self.move_log_frame = tk.Frame(self.main_frame)
+        self.move_log_frame.pack(anchor="w", pady=5)
+
+        self.move_log_labels = []
+        for _ in range(5):
+            label = tk.Label(self.move_log_frame, text="", anchor="w")
+            label.pack(anchor="w")
+            self.move_log_labels.append(label)
+
         self.create_cheatsheet()
 
     def deal(self):
@@ -201,6 +213,13 @@ class PokerUI:
         self.computer_chips_label.config(text=f"Computer Chips: ${self.game.players[1].chips}")
         self.blinds_label.config(text=f"Blinds: ${self.game.small_blind}/{self.game.big_blind}")
         self.dealer_label.config(text=f"Dealer: {'Player' if self.game.dealer_index == 0 else 'Computer'}")
+
+        # Update move log
+        for i, label in enumerate(self.move_log_labels):
+            if i < len(self.game.move_log):
+                label.config(text=self.game.move_log[i])
+            else:
+                label.config(text="")
 
         if self.cheatsheet_var.get():
             self.update_cheatsheet()

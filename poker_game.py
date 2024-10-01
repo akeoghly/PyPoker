@@ -79,6 +79,7 @@ class PokerGame:
         self.small_blind = 5
         self.big_blind = 10
         self.dealer_index = 0
+        self.move_log = []
 
     def deal_initial_hands(self):
         self.post_blinds()
@@ -135,17 +136,20 @@ class PokerGame:
             player.fold()
             opponent.chips += self.pot
             self.pot = 0
-            return "fold"
+            result = "fold"
         elif action == "check":
-            return "check"
+            result = "check"
         elif action == "bet":
             bet_amount = player.place_bet(amount)
             self.pot += bet_amount
-            return f"bet {bet_amount}"
+            result = f"bet {bet_amount}"
         elif action == "win":
             player.chips += self.pot
             self.pot = 0
-            return "win"
+            result = "win"
+        
+        self.log_move(player.name, result)
+        return result
 
     def bot_action(self):
         actions = ["fold", "check", "bet"]
@@ -154,6 +158,11 @@ class PokerGame:
             amount = random.randint(10, 100)
             return self.player_action(action, amount)
         return self.player_action(action)
+
+    def log_move(self, player_name, action):
+        self.move_log.append(f"{player_name}: {action}")
+        if len(self.move_log) > 5:
+            self.move_log.pop(0)
 
     def next_player(self):
         self.current_player = (self.current_player + 1) % len(self.players)

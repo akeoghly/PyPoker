@@ -226,7 +226,7 @@ class PokerUI:
         create_card_display(self.community_cards_frame, community_cards).pack()
 
         # Update the checkbox state
-        self.show_computer_cards_checkbox.config(state=tk.NORMAL if computer_hand else tk.DISABLED)
+        self.show_computer_cards_checkbox.config(state=tk.NORMAL if any(self.game.get_computer_hands()) else tk.DISABLED)
 
         self.pot_label.config(text=f"Pot: ${self.game.pot}")
         self.player_chips_label.config(text=f"Your Chips: ${self.game.players[0].chips}")

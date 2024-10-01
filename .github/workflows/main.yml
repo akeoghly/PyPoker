@@ -21,7 +21,7 @@ jobs:
           # Options to set for pyinstaller command
           options: ''
           # Specific python version you want to use
-          python_ver: 3.10
+          python_ver: '3.10'
           # Specific python architecture you want to use
           python_arch: 'x64'
           # Specific pyinstaller version you want to use

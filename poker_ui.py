@@ -164,29 +164,30 @@ class PokerUI:
                 self.game.current_player = 1  # Set to computer
                 self.game.player_action("win")
         else:
-            # For simplicity, we'll just compare the last card of each player
+            # Compare hands of all players
             player_hand = self.game.get_player_hand()
-            computer_hand = self.game.get_computer_hand()
-            if player_hand and computer_hand:
-                player_card = player_hand[-1]
-                computer_card = computer_hand[-1]
-                if player_card.value > computer_card.value:
-                    self.message_label.config(text="You win!")
-                    self.game.player_action("win")
-                elif player_card.value < computer_card.value:
-                    self.message_label.config(text="Computer wins!")
-                    self.game.current_player = 1  # Set to computer
-                    self.game.player_action("win")
-                else:
-                    self.message_label.config(text="It's a tie!")
-                    # In case of a tie, split the pot
-                    self.game.players[0].chips += self.game.pot // 2
-                    self.game.players[1].chips += self.game.pot // 2
-                    self.game.pot = 0
-                    self.game.log_move("", "tie")  # Log the tie
+            computer_hands = self.game.get_computer_hands()
+            all_hands = [player_hand] + computer_hands
+            
+            # Simple hand comparison (just comparing the last card of each hand)
+            best_hand = max(all_hands, key=lambda hand: hand[-1].value if hand else Card('', '2').value)
+            
+            if best_hand == player_hand:
+                self.message_label.config(text="You win!")
+                self.game.player_action("win")
+            elif best_hand in computer_hands:
+                winner_index = computer_hands.index(best_hand) + 1
+                self.message_label.config(text=f"Computer {winner_index} wins!")
+                self.game.current_player = winner_index
+                self.game.player_action("win")
             else:
-                self.message_label.config(text="Round ended")
-                self.game.log_move("", "round ended")  # Log the round end
+                self.message_label.config(text="It's a tie!")
+                # In case of a tie, split the pot
+                pot_share = self.game.pot // len(self.game.players)
+                for player in self.game.players:
+                    player.chips += pot_share
+                self.game.pot = 0
+                self.game.log_move("", "tie")  # Log the tie
         self.update_display()
         self.disable_action_buttons()
         self.deal_button.config(state=tk.NORMAL)

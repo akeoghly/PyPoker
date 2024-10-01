@@ -170,6 +170,7 @@ class PokerUI:
                     self.game.pot = 0
             else:
                 self.message_label.config(text="Round ended")
+        self.update_display()
         self.disable_action_buttons()
         self.deal_button.config(state=tk.NORMAL)
         self.update_display()
@@ -217,7 +218,7 @@ class PokerUI:
         # Update move log
         for i, label in enumerate(self.move_log_labels):
             if i < len(self.game.move_log):
-                label.config(text=self.game.move_log[i])
+                label.config(text=f"{5-i}. {self.game.move_log[-(i+1)]}")
             else:
                 label.config(text="")
 

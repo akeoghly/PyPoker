@@ -218,7 +218,7 @@ class PokerUI:
         # Update move log
         for i, label in enumerate(self.move_log_labels):
             if i < len(self.game.move_log):
-                label.config(text=f"{5-i}. {self.game.move_log[-(i+1)]}")
+                label.config(text=f"{i+1}. {self.game.move_log[-(i+1)]}")
             else:
                 label.config(text="")
 

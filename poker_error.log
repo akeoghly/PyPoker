@@ -1,0 +1,26 @@
+ERROR:root:An error occurred: cannot use geometry manager grid inside .!frame which already has slaves managed by pack
+ERROR:root:Traceback (most recent call last):
+  File "/Users/alex/Documents/Projects/Aider/Poker/poker_ui.py", line 297, in <module>
+    app = PokerUI(root)
+          ^^^^^^^^^^^^^
+  File "/Users/alex/Documents/Projects/Aider/Poker/poker_ui.py", line 12, in __init__
+    self.create_widgets()
+  File "/Users/alex/Documents/Projects/Aider/Poker/poker_ui.py", line 26, in create_widgets
+    self.player_hand_frame.grid(row=1, column=0, sticky="ew")
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/tkinter/__init__.py", line 2580, in grid_configure
+    self.tk.call(
+_tkinter.TclError: cannot use geometry manager grid inside .!frame which already has slaves managed by pack
+
+ERROR:root:An error occurred: cannot use geometry manager grid inside .!frame which already has slaves managed by pack
+ERROR:root:Traceback (most recent call last):
+  File "/Users/alex/Documents/Projects/Aider/Poker/poker_ui.py", line 297, in <module>
+    app = PokerUI(root)
+          ^^^^^^^^^^^^^
+  File "/Users/alex/Documents/Projects/Aider/Poker/poker_ui.py", line 12, in __init__
+    self.create_widgets()
+  File "/Users/alex/Documents/Projects/Aider/Poker/poker_ui.py", line 26, in create_widgets
+    self.player_hand_frame.grid(row=1, column=0, sticky="ew")
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/tkinter/__init__.py", line 2580, in grid_configure
+    self.tk.call(
+_tkinter.TclError: cannot use geometry manager grid inside .!frame which already has slaves managed by pack
+

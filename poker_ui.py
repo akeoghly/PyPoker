@@ -168,8 +168,10 @@ class PokerUI:
                     self.game.players[0].chips += self.game.pot // 2
                     self.game.players[1].chips += self.game.pot // 2
                     self.game.pot = 0
+                    self.game.log_move("", "tie")  # Log the tie
             else:
                 self.message_label.config(text="Round ended")
+                self.game.log_move("", "round ended")  # Log the round end
         self.update_display()
         self.disable_action_buttons()
         self.deal_button.config(state=tk.NORMAL)

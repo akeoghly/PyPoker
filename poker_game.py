@@ -160,7 +160,11 @@ class PokerGame:
         return self.player_action(action)
 
     def log_move(self, player_name, action):
-        self.move_log.append(f"{player_name}: {action}")
+        if action == "win":
+            winner = "Player" if player_name == "Player" else "Computer"
+            self.move_log.append(f"{winner}: win")
+        else:
+            self.move_log.append(f"{player_name}: {action}")
         if len(self.move_log) > 5:
             self.move_log.pop(0)
 
